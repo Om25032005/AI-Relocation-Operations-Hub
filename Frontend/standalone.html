@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Relocation Operations Hub | QuickMove Ops</title>
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- React 18, React-DOM, and Babel Standalone -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    :root {
+      --font-primary: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      
+      --bg-app: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f1f5f9;
+      --border-color: #e2e8f0;
+
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+
+      --success: #10b981;
+      --success-bg: #ecfdf5;
+      --success-border: #a7f3d0;
+      --success-text: #047857;
+
+      --warning: #f59e0b;
+      --warning-bg: #fffbeb;
+      --warning-border: #fde68a;
+      --warning-text: #b45309;
+
+      --critical: #ef4444;
+      --critical-bg: #fef2f2;
+      --critical-border: #fecaca;
+      --critical-text: #b91c1c;
+
+      --ai-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #d946ef 100%);
+      --ai-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.25);
+      
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-primary);
+      background-color: var(--bg-app);
+      color: var(--text-main);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+      transition: all 0.2s ease;
+    }
+
+    input, select, textarea {
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in { animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+    /* Utility Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .badge-critical, .badge-high {
+      background: var(--critical-bg);
+      color: var(--critical-text);
+      border: 1px solid var(--critical-border);
+    }
+
+    .badge-medium {
+      background: var(--warning-bg);
+      color: var(--warning-text);
+      border: 1px solid var(--warning-border);
+    }
+
+    .badge-low {
+      background: #f1f5f9;
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    .badge-stage {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    .badge-completed {
+      background: var(--success-bg);
+      color: var(--success-text);
+      border: 1px solid var(--success-border);
+    }
+
+    /* Layout & Buttons */
+    .container {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0 24px 40px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.2s ease;
+    }
+
+    .card:hover { box-shadow: var(--shadow-md); }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-secondary:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    .btn-ai {
+      background: var(--ai-gradient);
+      color: white;
+      padding: 10px 20px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 0.92rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--ai-shadow);
+    }
+
+    .btn-ai:hover {
+      opacity: 0.95;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useMemo } = React;
+
+    // Stages Constant
+    const STAGES = [
+      "Customer Registered",
+      "Requirements Collected",
+      "Apartment Search",
+      "Apartment Confirmed",
+      "Packers Booked",
+      "Utilities Setup",
+      "Address Change",
+      "Move Completed",
+      "Post-Move Support"
+    ];
+
+    // Initial Mock Data
+    const INITIAL_RELOCATIONS = [
+      {
+        id: "RELO-1001",
+        customerName: "Rahul Sharma",
+        phone: "+91 98765 43210",
+        email: "rahul.sharma@example.com",
+        sourceCity: "Bengaluru",
+        destinationCity: "Mumbai",
+        moveDate: "2026-08-15",
+        currentStage: "Utilities Setup",
+        priority: "High",
+        budget: "₹45,000 / month",
+        propertyPreference: "2 BHK Semi-furnished, Powai / Bandra West",
+        notes: "Has a pet dog. Requires high-speed fiber internet pre-installed before arrival.",
+        tasks: [
+          { id: "t1", title: "Upload Aadhaar & Pan Card", assignedTo: "Rahul (Customer)", dueDate: "2026-08-05", priority: "High", completed: true },
+          { id: "t2", title: "Confirm Lease Agreement in Powai", assignedTo: "Aditya (Property Partner)", dueDate: "2026-08-08", priority: "High", completed: true },
+          { id: "t3", title: "Book Express Movers & Packers", assignedTo: "Operations Exec", dueDate: "2026-08-10", priority: "Medium", completed: true },
+          { id: "t4", title: "Schedule Internet Installation (Airtel Fiber)", assignedTo: "Operations Exec", dueDate: "2026-08-13", priority: "Critical", completed: false },
+          { id: "t5", title: "Submit Bank Address Change Form", assignedTo: "Rahul (Customer)", dueDate: "2026-08-14", priority: "Low", completed: false }
+        ],
+        activities: [
+          { id: "a1", time: "2026-08-01 10:30 AM", type: "system", title: "Customer Registered", desc: "Rahul initiated relocation request via QuickMove portal." },
+          { id: "a2", time: "2026-08-03 02:15 PM", type: "doc", title: "KYC Documents Verified", desc: "Aadhaar and rental agreement verified by legal team." },
+          { id: "a3", time: "2026-08-08 11:00 AM", type: "property", title: "Apartment Confirmed", desc: "Lease agreement signed for Hiranandani Powai." },
+          { id: "a4", time: "2026-08-10 04:30 PM", type: "logistics", title: "Packers & Movers Booked", desc: "Slot locked with SafeMove Logistics for 15 Aug morning." }
+        ]
+      },
+      {
+        id: "RELO-1002",
+        customerName: "Ananya Verma",
+        phone: "+91 91234 56789",
+        email: "ananya.v@techcorp.io",
+        sourceCity: "Delhi NCR",
+        destinationCity: "Bengaluru",
+        moveDate: "2026-08-12",
+        currentStage: "Apartment Search",
+        priority: "Critical",
+        budget: "₹60,000 / month",
+        propertyPreference: "3 BHK Gated Society in Indiranagar or HSR Layout",
+        notes: "Corporate relocation sponsor. Urgent move due to office joining date.",
+        tasks: [
+          { id: "t21", title: "Upload Salary Slip & Company ID", assignedTo: "Ananya (Customer)", dueDate: "2026-08-04", priority: "High", completed: true },
+          { id: "t22", title: "Shortlist 3 Gated Apartments in HSR", assignedTo: "Property Executive", dueDate: "2026-08-06", priority: "Critical", completed: true },
+          { id: "t23", title: "Schedule Virtual Walkthrough Video Call", assignedTo: "Property Executive", dueDate: "2026-08-07", priority: "Critical", completed: false },
+          { id: "t24", title: "Draft Security Deposit Agreement", assignedTo: "Operations Exec", dueDate: "2026-08-09", priority: "High", completed: false },
+          { id: "t25", title: "Book Inter-state Movers Slot", assignedTo: "Logistics Team", dueDate: "2026-08-10", priority: "High", completed: false }
+        ],
+        activities: [
+          { id: "a21", time: "2026-08-02 09:00 AM", type: "system", title: "Priority Onboarding Completed", desc: "Corporate relocation voucher applied." },
+          { id: "a22", time: "2026-08-05 03:20 PM", type: "property", title: "Shortlisted 3 Properties", desc: "Pre-screened apartments sent via WhatsApp preview." }
+        ]
+      },
+      {
+        id: "RELO-1003",
+        customerName: "Vikram Patel",
+        phone: "+91 99887 76655",
+        email: "vikram.p@startup.in",
+        sourceCity: "Pune",
+        destinationCity: "Hyderabad",
+        moveDate: "2026-08-20",
+        currentStage: "Packers Booked",
+        priority: "Medium",
+        budget: "₹35,000 / month",
+        propertyPreference: "2 BHK Fully Furnished near HITEC City",
+        notes: "Wants climate-controlled vehicle for sensitive electronic items.",
+        tasks: [
+          { id: "t31", title: "Sign Digital Lease Contract", assignedTo: "Vikram (Customer)", dueDate: "2026-08-11", priority: "Medium", completed: true },
+          { id: "t32", title: "Lock Packers Pickup Slot (10 AM)", assignedTo: "Logistics Partner", dueDate: "2026-08-12", priority: "Medium", completed: true },
+          { id: "t33", title: "Coordinate Utility Transfer (Electricity Bill)", assignedTo: "Operations Exec", dueDate: "2026-08-16", priority: "Low", completed: false },
+          { id: "t34", title: "Order Gas Connection Transfer", assignedTo: "Operations Exec", dueDate: "2026-08-18", priority: "Medium", completed: false }
+        ],
+        activities: [
+          { id: "a31", time: "2026-08-04 11:15 AM", type: "system", title: "Requirements Verified", desc: "Budget and location preferences confirmed." },
+          { id: "a32", time: "2026-08-07 05:00 PM", type: "property", title: "Lease Deposit Paid", desc: "Token payment transferred to landlord." }
+        ]
+      },
+      {
+        id: "RELO-1004",
+        customerName: "Priya Nair",
+        phone: "+91 97654 32109",
+        email: "priya.nair@designstudio.com",
+        sourceCity: "Chennai",
+        destinationCity: "Bengaluru",
+        moveDate: "2026-08-09",
+        currentStage: "Move Completed",
+        priority: "Low",
+        budget: "₹40,000 / month",
+        propertyPreference: "1 BHK / Studio in Koramangala",
+        notes: "Move successfully conducted on Aug 6th. Pending final check-in survey.",
+        tasks: [
+          { id: "t41", title: "Complete Post-Move Deep Cleaning", assignedTo: "Facility Partner", dueDate: "2026-08-07", priority: "Low", completed: true },
+          { id: "t42", title: "Collect Customer Satisfaction Feedback", assignedTo: "Operations Exec", dueDate: "2026-08-08", priority: "Low", completed: true },
+          { id: "t43", title: "Close Support Ticket & Invoice", assignedTo: "Finance Team", dueDate: "2026-08-09", priority: "Low", completed: false }
+        ],
+        activities: [
+          { id: "a41", time: "2026-08-06 06:00 PM", type: "logistics", title: "Unpacking & Setup Finished", desc: "All boxes unpacked without damage." },
+          { id: "a42", time: "2026-08-07 10:00 AM", type: "utility", title: "Wi-Fi Active", desc: "Fiber broadband set up and speed tested." }
+        ]
+      },
+      {
+        id: "RELO-1005",
+        customerName: "Rohan Mehta",
+        phone: "+91 98112 23344",
+        email: "rohan.mehta@finance.org",
+        sourceCity: "Ahmedabad",
+        destinationCity: "Gurugram",
+        moveDate: "2026-08-25",
+        currentStage: "Requirements Collected",
+        priority: "Medium",
+        budget: "₹50,000 / month",
+        propertyPreference: "3 BHK High-rise in Golf Course Road",
+        notes: "Requires parking space for 2 SUVs.",
+        tasks: [
+          { id: "t51", title: "Collect Preferred Viewing Schedule", assignedTo: "Operations Exec", dueDate: "2026-08-10", priority: "Medium", completed: false },
+          { id: "t52", title: "Verify Gated Society Pet & Vehicle Bylaws", assignedTo: "Property Executive", dueDate: "2026-08-12", priority: "Low", completed: false }
+        ],
+        activities: [
+          { id: "a51", time: "2026-08-06 02:00 PM", type: "system", title: "Initial Consultation Completed", desc: "Move parameters captured." }
+        ]
+      },
+      {
+        id: "RELO-1006",
+        customerName: "Sneha Gupta",
+        phone: "+91 90000 11122",
+        email: "sneha.g@health.org",
+        sourceCity: "Kolkata",
+        destinationCity: "Hyderabad",
+        moveDate: "2026-08-14",
+        currentStage: "Address Change",
+        priority: "High",
+        budget: "₹38,000 / month",
+        propertyPreference: "2 BHK Gated Community in Gachibowli",
+        notes: "Wants address proof updated in Passport and Aadhaar quickly.",
+        tasks: [
+          { id: "t61", title: "Submit Bank Passbook Address Update", assignedTo: "Sneha (Customer)", dueDate: "2026-08-11", priority: "High", completed: false },
+          { id: "t62", title: "Schedule LPG Gas Cylinder Transfer", assignedTo: "Operations Exec", dueDate: "2026-08-13", priority: "Medium", completed: false }
+        ],
+        activities: [
+          { id: "a61", time: "2026-08-05 04:00 PM", type: "utility", title: "Utility Setup Completed", desc: "Electricity meter account transferred." }
+        ]
+      }
+    ];
+
+    // Header Component
+    function Header({ activeTab, setActiveTab, onOpenAddModal, totalCases, highPriorityCount }) {
+      return (
+        <header style={{
+          background: '#0f172a',
+          color: 'white',
+          borderBottom: '1px solid #1e293b',
+          position: 'sticky',
+          top: 0,
+          zIndex: 100
+        }}>
+          <div style={{
+            maxWidth: '1360px',
+            margin: '0 auto',
+            padding: '14px 24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '16px'
+          }}>
+            <div onClick={() => setActiveTab('dashboard')} style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+              <div style={{
+                background: 'var(--ai-gradient)',
+                width: '40px',
+                height: '40px',
+                borderRadius: '10px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 12px rgba(124, 58, 237, 0.4)',
+                fontSize: '1.2rem'
+              }}>
+                🚚
+              </div>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.5px' }}>QuickMove</span>
+                  <span style={{
+                    background: 'rgba(99, 102, 241, 0.2)',
+                    color: '#a5b4fc',
+                    border: '1px solid rgba(165, 180, 252, 0.3)',
+                    fontSize: '0.7rem',
+                    fontWeight: 700,
+                    padding: '2px 8px',
+                    borderRadius: '99px'
+                  }}>
+                    ✨ AI OPS HUB
+                  </span>
+                </div>
+                <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: 0 }}>
+                  AI-Assisted Operations Dashboard for Relocations
+                </p>
+              </div>
+            </div>
+
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              background: '#1e293b',
+              padding: '4px',
+              borderRadius: '10px',
+              border: '1px solid #334155'
+            }}>
+              <button
+                onClick={() => setActiveTab('dashboard')}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  fontSize: '0.88rem',
+                  fontWeight: 600,
+                  color: activeTab === 'dashboard' ? '#ffffff' : '#94a3b8',
+                  background: activeTab === 'dashboard' ? '#334155' : 'transparent'
+                }}
+              >
+                📊 Dashboard
+              </button>
+              <button
+                onClick={onOpenAddModal}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  fontSize: '0.88rem',
+                  fontWeight: 600,
+                  color: activeTab === 'add' ? '#ffffff' : '#94a3b8',
+                  background: activeTab === 'add' ? '#334155' : 'transparent'
+                }}
+              >
+                ➕ Add Relocation
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '10px',
+                padding: '6px 14px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                fontSize: '0.82rem'
+              }}>
+                <div>Active Cases: <strong style={{ color: '#ffffff' }}>{totalCases}</strong></div>
+                <div style={{ width: '1px', height: '14px', background: 'rgba(255,255,255,0.15)' }} />
+                <div>High Priority: <strong style={{ color: '#f87171' }}>{highPriorityCount}</strong></div>
+              </div>
+
+              <button onClick={onOpenAddModal} className="btn-primary" style={{ padding: '8px 14px', fontSize: '0.85rem' }}>
+                ➕ New Case
+              </button>
+            </div>
+          </div>
+        </header>
+      );
+    }
+
+    // Dashboard Component
+    function Dashboard({ relocations, onSelectRelocation, onOpenAddModal }) {
+      const [searchTerm, setSearchTerm] = useState('');
+      const [stageFilter, setStageFilter] = useState('ALL');
+      const [priorityFilter, setPriorityFilter] = useState('ALL');
+      const [showAiInsights, setShowAiInsights] = useState(true);
+
+      const stats = useMemo(() => {
+        const totalActive = relocations.length;
+        const highPriority = relocations.filter(r => r.priority === 'High' || r.priority === 'Critical').length;
+        
+        const today = new Date('2026-08-07');
+        const fourteenDaysFromNow = new Date('2026-08-21');
+        const upcomingMoves = relocations.filter(r => {
+          const moveDate = new Date(r.moveDate);
+          return moveDate >= today && moveDate <= fourteenDaysFromNow;
+        }).length;
+
+        const pendingFollowups = relocations.reduce((acc, r) => acc + r.tasks.filter(t => !t.completed).length, 0);
+        return { totalActive, highPriority, upcomingMoves, pendingFollowups };
+      }, [relocations]);
+
+      const filteredRelocations = useMemo(() => {
+        return relocations.filter(r => {
+          const matchesSearch = 
+            r.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            r.sourceCity.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            r.destinationCity.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            r.id.toLowerCase().includes(searchTerm.toLowerCase());
+
+          const matchesStage = stageFilter === 'ALL' || r.currentStage === stageFilter;
+          const matchesPriority = priorityFilter === 'ALL' || r.priority === priorityFilter;
+
+          return matchesSearch && matchesStage && matchesPriority;
+        });
+      }, [relocations, searchTerm, stageFilter, priorityFilter]);
+
+      return (
+        <div style={{ padding: '24px 0 40px' }} className="animate-fade-in">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '24px' }}>
+            <div>
+              <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.5px' }}>
+                Operations Executive Dashboard
+              </h1>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginTop: '4px' }}>
+                Real-time tracking, task management, and AI next-action intelligence.
+              </p>
+            </div>
+            <button onClick={onOpenAddModal} className="btn-primary" style={{ padding: '10px 20px', fontSize: '0.95rem' }}>
+              ➕ Add New Relocation
+            </button>
+          </div>
+
+          {/* Metric Cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+            <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <div style={{ background: 'var(--primary-light)', padding: '14px', borderRadius: '12px', fontSize: '1.5rem' }}>👥</div>
+              <div>
+                <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Total Active Relocations</div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#0f172a' }}>{stats.totalActive}</div>
+              </div>
+            </div>
+
+            <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <div style={{ background: 'var(--critical-bg)', padding: '14px', borderRadius: '12px', fontSize: '1.5rem' }}>⚠️</div>
+              <div>
+                <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>High Priority Cases</div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--critical-text)' }}>{stats.highPriority}</div>
+              </div>
+            </div>
+
+            <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <div style={{ background: 'var(--warning-bg)', padding: '14px', borderRadius: '12px', fontSize: '1.5rem' }}>📅</div>
+              <div>
+                <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Moves in Next 14 Days</div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#0f172a' }}>{stats.upcomingMoves}</div>
+              </div>
+            </div>
+
+            <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <div style={{ background: 'var(--success-bg)', padding: '14px', borderRadius: '12px', fontSize: '1.5rem' }}>⏰</div>
+              <div>
+                <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Pending Follow-ups</div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#0f172a' }}>{stats.pendingFollowups}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* AI Insights Bar */}
+          {showAiInsights && (
+            <div style={{
+              background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
+              borderRadius: 'var(--radius-lg)',
+              padding: '20px 24px',
+              color: 'white',
+              marginBottom: '28px',
+              position: 'relative'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ fontSize: '1.2rem' }}>✨</span>
+                  <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>AI Operations Intelligence</h2>
+                  <span style={{ background: 'rgba(255, 255, 255, 0.15)', fontSize: '0.75rem', padding: '2px 8px', borderRadius: '99px', color: '#c084fc' }}>
+                    Live Priority Alerts
+                  </span>
+                </div>
+                <button onClick={() => setShowAiInsights(false)} style={{ color: '#94a3b8', fontSize: '0.8rem' }}>Dismiss</button>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '14px' }}>
+                <div style={{ background: 'rgba(255, 255, 255, 0.06)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '12px', padding: '14px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <strong style={{ fontSize: '0.92rem' }}>Critical Move Imminent</strong>
+                    <span style={{ fontSize: '0.72rem', background: 'rgba(239, 68, 68, 0.25)', color: '#fca5a5', padding: '2px 8px', borderRadius: '99px' }}>Critical</span>
+                  </div>
+                  <p style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>Ananya Verma is moving in 5 days with pending virtual apartment walkthrough call.</p>
+                  <button onClick={() => onSelectRelocation('RELO-1002')} style={{ color: '#818cf8', fontSize: '0.83rem', fontWeight: 700, marginTop: '8px' }}>
+                    View Ananya's Case →
+                  </button>
+                </div>
+
+                <div style={{ background: 'rgba(255, 255, 255, 0.06)', border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: '12px', padding: '14px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <strong style={{ fontSize: '0.92rem' }}>Internet Setup Required</strong>
+                    <span style={{ fontSize: '0.72rem', background: 'rgba(245, 158, 11, 0.25)', color: '#fde68a', padding: '2px 8px', borderRadius: '99px' }}>Upcoming</span>
+                  </div>
+                  <p style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>Rahul Sharma move is scheduled Aug 15. Fiber setup requires 48hr advance lead time.</p>
+                  <button onClick={() => onSelectRelocation('RELO-1001')} style={{ color: '#818cf8', fontSize: '0.83rem', fontWeight: 700, marginTop: '8px' }}>
+                    Check Rahul's Tasks →
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Table Section */}
+          <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
+            <div style={{ padding: '18px 24px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>Active Relocation Cases</h3>
+                <span className="badge badge-stage">{filteredRelocations.length} Cases</span>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <input
+                  type="text"
+                  placeholder="🔍 Search customer or city..."
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  style={{ padding: '8px 12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', background: '#f8fafc' }}
+                />
+                <select
+                  value={stageFilter}
+                  onChange={e => setStageFilter(e.target.value)}
+                  style={{ padding: '8px 12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', background: '#f8fafc' }}
+                >
+                  <option value="ALL">All Stages</option>
+                  {STAGES.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+                <select
+                  value={priorityFilter}
+                  onChange={e => setPriorityFilter(e.target.value)}
+                  style={{ padding: '8px 12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', background: '#f8fafc' }}
+                >
+                  <option value="ALL">All Priorities</option>
+                  <option value="Critical">Critical</option>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+                <thead>
+                  <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border-color)', color: 'var(--text-muted)' }}>
+                    <th style={{ padding: '14px 20px' }}>Customer</th>
+                    <th style={{ padding: '14px 20px' }}>Route</th>
+                    <th style={{ padding: '14px 20px' }}>Current Stage</th>
+                    <th style={{ padding: '14px 20px' }}>Priority</th>
+                    <th style={{ padding: '14px 20px' }}>Move Date</th>
+                    <th style={{ padding: '14px 20px' }}>Pending Tasks</th>
+                    <th style={{ padding: '14px 20px', textAlign: 'right' }}>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredRelocations.map(relo => {
+                    const pendingCount = relo.tasks.filter(t => !t.completed).length;
+                    return (
+                      <tr key={relo.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                        <td style={{ padding: '16px 20px' }}>
+                          <div style={{ fontWeight: 700, color: '#0f172a' }}>{relo.customerName}</div>
+                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{relo.id} • {relo.phone}</div>
+                        </td>
+                        <td style={{ padding: '16px 20px', fontWeight: 600 }}>{relo.sourceCity} → {relo.destinationCity}</td>
+                        <td style={{ padding: '16px 20px' }}><span className="badge badge-stage">{relo.currentStage}</span></td>
+                        <td style={{ padding: '16px 20px' }}><span className={`badge badge-${relo.priority.toLowerCase()}`}>{relo.priority}</span></td>
+                        <td style={{ padding: '16px 20px' }}>📅 {relo.moveDate}</td>
+                        <td style={{ padding: '16px 20px' }}>
+                          <span style={{
+                            fontSize: '0.8rem', fontWeight: 600,
+                            color: pendingCount > 0 ? 'var(--warning-text)' : 'var(--success-text)',
+                            background: pendingCount > 0 ? 'var(--warning-bg)' : 'var(--success-bg)',
+                            padding: '3px 8px', borderRadius: '6px'
+                          }}>
+                            {pendingCount > 0 ? `${pendingCount} Pending` : 'All Done ✓'}
+                          </span>
+                        </td>
+                        <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                          <button onClick={() => onSelectRelocation(relo.id)} className="btn-secondary" style={{ padding: '6px 12px', fontSize: '0.83rem' }}>
+                            View Details →
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Relocation Details Component
+    function RelocationDetails({ relocation, onBack, onUpdateStage, onToggleTask, onAddTask, onAddActivity }) {
+      const [aiSummary, setAiSummary] = useState(null);
+      const [aiNextAction, setAiNextAction] = useState(null);
+      const [showAddTask, setShowAddTask] = useState(false);
+      const [taskTitle, setTaskTitle] = useState('');
+      const [actDesc, setActDesc] = useState('');
+
+      const currentStageIndex = STAGES.indexOf(relocation.currentStage);
+
+      const generateSummary = () => {
+        const completed = relocation.tasks.filter(t => t.completed).length;
+        const total = relocation.tasks.length;
+        setAiSummary({
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          text: `[Status Update - ${relocation.customerName}]\nStage: ${relocation.currentStage} (${currentStageIndex+1}/9)\nMove Route: ${relocation.sourceCity} → ${relocation.destinationCity} on ${relocation.moveDate}\nChecklist: ${completed}/${total} tasks completed.\nSummary: Apartment confirmation complete. Packers locked. Fiber internet installation pending.`
+        });
+      };
+
+      const suggestNextAction = () => {
+        const uncompleted = relocation.tasks.filter(t => !t.completed);
+        if (uncompleted.length > 0) {
+          const top = uncompleted[0];
+          setAiNextAction({
+            title: `Follow Up: ${top.title}`,
+            rationale: `Assigned to ${top.assignedTo}. Completing this unblocks stage progression before target move date ${relocation.moveDate}.`,
+            taskId: top.id
+          });
+        } else {
+          setAiNextAction({
+            title: `Advance Stage to Next Step`,
+            rationale: `All pending tasks complete. Ready to transition case to next milestone.`,
+            advance: true
+          });
+        }
+      };
+
+      const submitTask = (e) => {
+        e.preventDefault();
+        if (!taskTitle) return;
+        onAddTask(relocation.id, {
+          id: 't_' + Date.now(),
+          title: taskTitle,
+          assignedTo: 'Operations Exec',
+          dueDate: relocation.moveDate,
+          priority: 'High',
+          completed: false
+        });
+        setTaskTitle('');
+        setShowAddTask(false);
+      };
+
+      const submitActivity = (e) => {
+        e.preventDefault();
+        if (!actDesc) return;
+        onAddActivity(relocation.id, {
+          id: 'a_' + Date.now(),
+          time: new Date().toISOString().replace('T', ' ').substring(0, 16),
+          title: 'Operations Note',
+          desc: actDesc
+        });
+        setActDesc('');
+      };
+
+      return (
+        <div style={{ padding: '24px 0 60px' }} className="animate-fade-in">
+          <button onClick={onBack} className="btn-secondary" style={{ marginBottom: '18px' }}>← Back to Dashboard</button>
+
+          {/* Banner */}
+          <div className="card" style={{ marginBottom: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <h1 style={{ fontSize: '1.6rem', fontWeight: 800 }}>{relocation.customerName}</h1>
+                  <span className={`badge badge-${relocation.priority.toLowerCase()}`}>{relocation.priority} Priority</span>
+                  <span className="badge badge-stage">{relocation.currentStage}</span>
+                </div>
+                <div style={{ display: 'flex', gap: '16px', marginTop: '10px', fontSize: '0.88rem', color: 'var(--text-muted)' }}>
+                  <span>📞 {relocation.phone}</span>
+                  <span>✉️ {relocation.email}</span>
+                  <span>📍 {relocation.sourceCity} → {relocation.destinationCity}</span>
+                  <span>📅 Target Move: <strong>{relocation.moveDate}</strong></span>
+                </div>
+              </div>
+
+              <div>
+                <select
+                  value={relocation.currentStage}
+                  onChange={e => onUpdateStage(relocation.id, e.target.value)}
+                  style={{ padding: '8px 12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', fontWeight: 600, color: 'var(--primary)' }}
+                >
+                  {STAGES.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px', marginTop: '14px', fontSize: '0.85rem' }}>
+              <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '8px' }}><strong>Budget:</strong> {relocation.budget}</div>
+              <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '8px' }}><strong>Preference:</strong> {relocation.propertyPreference}</div>
+              <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '8px' }}><strong>Notes:</strong> {relocation.notes}</div>
+            </div>
+          </div>
+
+          {/* Stepper Progress */}
+          <div className="card" style={{ marginBottom: '24px' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '16px' }}>Relocation Stage Stepper</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${STAGES.length}, 1fr)`, gap: '6px', overflowX: 'auto' }}>
+              {STAGES.map((s, idx) => {
+                const done = idx < currentStageIndex;
+                const active = idx === currentStageIndex;
+                return (
+                  <div key={s} onClick={() => onUpdateStage(relocation.id, s)} style={{ textAlign: 'center', cursor: 'pointer', minWidth: '95px' }}>
+                    <div style={{
+                      width: '30px', height: '30px', borderRadius: '50%', margin: '0 auto 6px',
+                      background: done ? 'var(--success)' : active ? 'var(--primary)' : '#e2e8f0',
+                      color: 'white', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}>
+                      {done ? '✓' : idx+1}
+                    </div>
+                    <span style={{ fontSize: '0.72rem', fontWeight: active ? 700 : 500, color: active ? 'var(--primary)' : 'var(--text-muted)' }}>{s}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Grid Layout */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px' }}>
+            {/* Tasks */}
+            <div className="card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Pending Tasks Checklist</h3>
+                <button onClick={() => setShowAddTask(!showAddTask)} className="btn-secondary" style={{ padding: '4px 10px', fontSize: '0.8rem' }}>➕ Add Task</button>
+              </div>
+
+              {showAddTask && (
+                <form onSubmit={submitTask} style={{ background: '#f8fafc', padding: '12px', borderRadius: '8px', marginBottom: '14px' }}>
+                  <input
+                    type="text"
+                    placeholder="Task name..."
+                    value={taskTitle}
+                    onChange={e => setTaskTitle(e.target.value)}
+                    style={{ width: '100%', padding: '8px', marginBottom: '8px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                  />
+                  <button type="submit" className="btn-primary" style={{ padding: '6px 12px', fontSize: '0.8rem' }}>Save Task</button>
+                </form>
+              )}
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {relocation.tasks.map(t => (
+                  <div key={t.id} style={{ display: 'flex', gap: '10px', padding: '10px', border: '1px solid #e2e8f0', borderRadius: '8px', background: t.completed ? '#f8fafc' : 'white' }}>
+                    <button onClick={() => onToggleTask(relocation.id, t.id)} style={{ fontSize: '1.1rem' }}>
+                      {t.completed ? '✅' : '⚪'}
+                    </button>
+                    <div>
+                      <div style={{ fontWeight: 600, textDecoration: t.completed ? 'line-through' : 'none', color: t.completed ? 'var(--text-muted)' : '#0f172a' }}>{t.title}</div>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '2px' }}>👤 {t.assignedTo} • 📅 {t.dueDate}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Activity Feed */}
+            <div className="card">
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '14px' }}>Activity History</h3>
+              <form onSubmit={submitActivity} style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
+                <input
+                  type="text"
+                  placeholder="Log activity note..."
+                  value={actDesc}
+                  onChange={e => setActDesc(e.target.value)}
+                  style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+                />
+                <button type="submit" className="btn-secondary" style={{ padding: '8px 12px' }}>Log</button>
+              </form>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '280px', overflowY: 'auto' }}>
+                {relocation.activities.map(a => (
+                  <div key={a.id} style={{ borderLeft: '2px solid var(--primary)', paddingLeft: '10px' }}>
+                    <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>{a.title} <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 400 }}>• {a.time}</span></div>
+                    <div style={{ fontSize: '0.82rem', color: '#475569' }}>{a.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* AI Summary Card */}
+            <div className="card" style={{ border: '1px solid #c084fc', background: '#faf5ff' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#6b21a8' }}>✨ AI Relocation Summary</h3>
+                <button onClick={generateSummary} className="btn-ai" style={{ padding: '6px 12px', fontSize: '0.8rem' }}>Generate Summary</button>
+              </div>
+              {aiSummary ? (
+                <div style={{ background: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #e9d5ff', whiteSpace: 'pre-line', fontSize: '0.88rem' }}>
+                  {aiSummary.text}
+                </div>
+              ) : (
+                <p style={{ fontSize: '0.85rem', color: '#7e22ce' }}>Click "Generate Summary" to produce a status update for customers.</p>
+              )}
+            </div>
+
+            {/* AI Next Action Card */}
+            <div className="card" style={{ border: '1px solid #60a5fa', background: '#eff6ff' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1e40af' }}>📈 AI Recommended Next Action</h3>
+                <button onClick={suggestNextAction} className="btn-primary" style={{ padding: '6px 12px', fontSize: '0.8rem' }}>Suggest Next Action</button>
+              </div>
+              {aiNextAction ? (
+                <div style={{ background: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #bfdbfe' }}>
+                  <h4 style={{ fontWeight: 700, color: '#0f172a' }}>{aiNextAction.title}</h4>
+                  <p style={{ fontSize: '0.85rem', color: '#334155', marginTop: '4px' }}>{aiNextAction.rationale}</p>
+                  {aiNextAction.taskId && (
+                    <button onClick={() => { onToggleTask(relocation.id, aiNextAction.taskId); suggestNextAction(); }} className="btn-primary" style={{ marginTop: '10px', padding: '6px 12px', fontSize: '0.8rem', background: '#16a34a' }}>
+                      ✓ Mark Task Complete
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <p style={{ fontSize: '0.85rem', color: '#1d4ed8' }}>Click "Suggest Next Action" for automated task prioritization.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Modal Component
+    function AddRelocationModal({ isOpen, onClose, onAddRelocation }) {
+      const [customerName, setCustomerName] = useState('');
+      const [phone, setPhone] = useState('');
+      const [sourceCity, setSourceCity] = useState('');
+      const [destinationCity, setDestinationCity] = useState('');
+      const [moveDate, setMoveDate] = useState('');
+
+      if (!isOpen) return null;
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        onAddRelocation({
+          id: `RELO-${Math.floor(1000 + Math.random()*9000)}`,
+          customerName,
+          phone,
+          email: `${customerName.toLowerCase().replace(/\s+/g, '.')}@example.com`,
+          sourceCity,
+          destinationCity,
+          moveDate,
+          currentStage: "Customer Registered",
+          priority: "High",
+          budget: "₹45,000 / month",
+          propertyPreference: "2 BHK Gated Society",
+          notes: "Newly onboarded relocation case.",
+          tasks: [
+            { id: 't_new_1', title: 'Collect KYC Documents', assignedTo: 'Operations Exec', dueDate: moveDate, priority: 'High', completed: false },
+            { id: 't_new_2', title: 'Schedule Requirements Video Call', assignedTo: 'Operations Exec', dueDate: moveDate, priority: 'Medium', completed: false }
+          ],
+          activities: [
+            { id: 'a_new_1', time: new Date().toISOString().replace('T', ' ').substring(0, 16), title: 'Case Created', desc: 'Case file opened.' }
+          ]
+        });
+        onClose();
+      };
+
+      return (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.65)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: 'white', borderRadius: '16px', width: '100%', maxWidth: '550px', padding: '24px' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '16px' }}>Add New Relocation</h2>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <input type="text" placeholder="Customer Name *" value={customerName} onChange={e => setCustomerName(e.target.value)} required style={{ padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+              <input type="text" placeholder="Phone *" value={phone} onChange={e => setPhone(e.target.value)} required style={{ padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+              <input type="text" placeholder="Source City *" value={sourceCity} onChange={e => setSourceCity(e.target.value)} required style={{ padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+              <input type="text" placeholder="Destination City *" value={destinationCity} onChange={e => setDestinationCity(e.target.value)} required style={{ padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+              <input type="date" value={moveDate} onChange={e => setMoveDate(e.target.value)} required style={{ padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '12px' }}>
+                <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
+                <button type="submit" className="btn-primary">Save Case</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      );
+    }
+
+    // App Component
+    function App() {
+      const [relocations, setRelocations] = useState(INITIAL_RELOCATIONS);
+      const [selectedReloId, setSelectedReloId] = useState(null);
+      const [activeTab, setActiveTab] = useState('dashboard');
+      const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+      const selectedReloc = relocations.find(r => r.id === selectedReloId) || null;
+
+      const handleUpdateStage = (reloId, newStage) => {
+        setRelocations(prev => prev.map(r => r.id === reloId ? {
+          ...r, currentStage: newStage,
+          activities: [{ id: 'a_' + Date.now(), time: new Date().toISOString().replace('T', ' ').substring(0, 16), title: 'Stage Updated', desc: `Advanced to ${newStage}` }, ...r.activities]
+        } : r));
+      };
+
+      const handleToggleTask = (reloId, taskId) => {
+        setRelocations(prev => prev.map(r => r.id === reloId ? {
+          ...r, tasks: r.tasks.map(t => t.id === taskId ? { ...t, completed: !t.completed } : t)
+        } : r));
+      };
+
+      const handleAddTask = (reloId, newTask) => {
+        setRelocations(prev => prev.map(r => r.id === reloId ? { ...r, tasks: [newTask, ...r.tasks] } : r));
+      };
+
+      const handleAddActivity = (reloId, newActivity) => {
+        setRelocations(prev => prev.map(r => r.id === reloId ? { ...r, activities: [newActivity, ...r.activities] } : r));
+      };
+
+      const handleAddRelocation = (newRelo) => {
+        setRelocations(prev => [newRelo, ...prev]);
+        setSelectedReloId(newRelo.id);
+      };
+
+      const highPriorityCount = relocations.filter(r => r.priority === 'High' || r.priority === 'Critical').length;
+
+      return (
+        <div>
+          <Header 
+            activeTab={activeTab}
+            setActiveTab={(tab) => { setActiveTab(tab); if (tab === 'dashboard') setSelectedReloId(null); }}
+            onOpenAddModal={() => setIsAddModalOpen(true)}
+            totalCases={relocations.length}
+            highPriorityCount={highPriorityCount}
+          />
+          <main className="container">
+            {selectedReloc ? (
+              <RelocationDetails 
+                relocation={selectedReloc}
+                onBack={() => setSelectedReloId(null)}
+                onUpdateStage={handleUpdateStage}
+                onToggleTask={handleToggleTask}
+                onAddTask={handleAddTask}
+                onAddActivity={handleAddActivity}
+              />
+            ) : (
+              <Dashboard 
+                relocations={relocations}
+                onSelectRelocation={(id) => setSelectedReloId(id)}
+                onOpenAddModal={() => setIsAddModalOpen(true)}
+              />
+            )}
+          </main>
+          <AddRelocationModal 
+            isOpen={isAddModalOpen}
+            onClose={() => setIsAddModalOpen(false)}
+            onAddRelocation={handleAddRelocation}
+          />
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
