@@ -25,6 +25,10 @@ import {
 } from 'lucide-react';
 import { STAGES } from '../data/mockData';
 
+const API_BASE_URL = import.meta.env.DEV
+  ? (import.meta.env.VITE_API_BASE_URL || '')
+  : 'https://ai-relocation-operations-hub.onrender.com';
+
 export default function RelocationDetails({ 
   relocation, 
   onBack, 
@@ -105,7 +109,7 @@ export default function RelocationDetails({
     setIsGeneratingSummary(true);
     setSummaryError(null);
     try {
-      const response = await fetch('/api/ai/summary', {
+      const response = await fetch(`${API_BASE_URL}/api/ai/summary`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ relocation })
@@ -133,7 +137,7 @@ export default function RelocationDetails({
     setIsGeneratingNextAction(true);
     setNextActionError(null);
     try {
-      const response = await fetch('/api/ai/next-action', {
+      const response = await fetch(`${API_BASE_URL}/api/ai/next-action`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ relocation })
