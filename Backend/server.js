@@ -2,7 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 
 const app = express();
-const port = Number(process.env.PORT || 3001);
+const port = process.env.PORT || 3001;
 const model = process.env.OPENROUTER_MODEL || 'openrouter/free';
 const openRouterUrl = 'https://openrouter.ai/api/v1/chat/completions';
 
@@ -122,6 +122,6 @@ app.post('/api/ai/next-action', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`AI backend listening on http://localhost:${port}`);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`AI backend listening on http://0.0.0.0:${port}`);
 });
