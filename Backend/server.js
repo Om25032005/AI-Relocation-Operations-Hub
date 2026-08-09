@@ -1,11 +1,27 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 
 const app = express();
 const port = process.env.PORT || 3001;
 const model = process.env.OPENROUTER_MODEL || 'openrouter/free';
 const openRouterUrl = 'https://openrouter.ai/api/v1/chat/completions';
+const allowedOrigins = new Set([
+  'https://ai-relocation-operations-hub.vercel.app',
+  'http://localhost:3000'
+]);
 
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.has(origin)) {
+      callback(null, true);
+      return;
+    }
+    callback(new Error('Origin is not allowed by CORS.'));
+  },
+  methods: ['POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type']
+}));
 app.use(express.json({ limit: '256kb' }));
 
 function requireRelocation(req, res) {
